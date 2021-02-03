@@ -1,0 +1,7 @@
+[credential]
+	helper = cache
+[user]
+	name = Nicolas Forstner
+	email = nls.forstner@gmail.com
+[core]
+	editor = vim
