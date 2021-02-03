@@ -1,13 +1,14 @@
 #!/bin/bash
 
+old_pwd=$PWD
 source ./programs
 
 # Add dotfiles
 dotfiles=".vimrc .profile .gitconfig .bashrc .bash_aliases"
 for dotfile in $dotfiles
 do
-	echo "Creating symlink for $PWD/$dotfile in $HOME/$dotfile"
-	ln -s $PWD/$dotfile $HOME/$dotfile
+	echo "Creating symlink for $old_pwd/$dotfile in $HOME/$dotfile"
+	ln -s $old_pwd/$dotfile $HOME/$dotfile
 done
 
 source ~/.profile
