@@ -1,12 +1,9 @@
 #!/bin/bash
 
-sudo apt-get update -yq && \
-sudo apt-get upgrade -yq && \
-sudo apt install vim python3 python3-pip -yq && \
-sudo apt-get autoremove -yq
+source ./programs
 
 # Add dotfiles
-dotfiles=".vimrc .profile .gitconfig .bashrc"
+dotfiles=".vimrc .profile .gitconfig .bashrc .bash_aliases"
 for dotfile in $dotfiles
 do
 	echo "Creating symlink for $PWD/$dotfile in $HOME/$dotfile"
@@ -14,6 +11,4 @@ do
 done
 
 source ~/.profile
-vim -c PlugInstall -c 'qa!'
 
-source ./programs

@@ -35,7 +35,11 @@ call plug#end()
 " Colorscheme
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
-colorscheme gruvbox
+try
+  colorscheme gruvbox
+catch /^Vim\%((\a\+)\)\=:E185/
+  colorscheme default
+endtry
 set background=dark
 
 " Convenience remaps
