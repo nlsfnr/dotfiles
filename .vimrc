@@ -30,12 +30,16 @@ Plug 'morhetz/gruvbox' " Colorscheme
 Plug 'Valloric/YouCompleteMe' " Autocomplete
 Plug 'mbbill/undotree' " Undotree visualization
 Plug 'posva/vim-vue'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 " Colorscheme
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
-try
+" The vimrc might be loaded for the first time, so we do not know if the 
+" plugins are already installed.
+try 
   colorscheme gruvbox
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme default
@@ -54,11 +58,15 @@ nnoremap <leader>e :e
 nnoremap <leader>qq :q!<CR>
 " Open undotree visaulization
 nnoremap <leader>u :UndotreeToggle<CR>
+" Fuzzy file finder
+nnoremap <C-p> :GFiles<Cr>
 " Center cursor after searches
 nnoremap * *zz
 nnoremap # #zz
 nnoremap n nzz
 nnoremap N Nzz
+" Faster replacing
+nnoremap S :%s//g<Left><Left>
 " Jump to end and beginning of line and up and down the window
 nnoremap J 5j
 nnoremap K 5k
@@ -71,10 +79,11 @@ vnoremap L $
 " Smashing j and k will act as ESC
 inoremap jk <Esc>
 inoremap kj <Esc>
+" Other
+nnoremap Y y$
 " Move selection upwards and downwards
-" vnoremap J :m '>+1<CR>gv=gv
-" vnoremap K :m '<-2<CR>gv=gv
-
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
 " YCM Jumps
 nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
 nnoremap <silent> <leader>gf :YcmCompleter FixIt<CR>
