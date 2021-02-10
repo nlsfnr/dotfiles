@@ -37,9 +37,9 @@ call plug#end()
 " Colorscheme
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
-" The vimrc might be loaded for the first time, so we do not know if the 
+" The vimrc might be loaded for the first time, so we do not know if the
 " plugins are already installed.
-try 
+try
   colorscheme gruvbox
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme default
@@ -54,12 +54,13 @@ nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
 " Operate on current buffer
 nnoremap <leader>w :w!<CR>
-nnoremap <leader>e :e 
+nnoremap <leader>e :e
 nnoremap <leader>qq :q!<CR>
-" Open undotree visaulization
-nnoremap <leader>u :UndotreeToggle<CR>
+nnoremap QQ ZQ
 " Fuzzy file finder
 nnoremap <C-p> :GFiles<Cr>
+" Open undotree visaulization
+nnoremap <leader>u :UndotreeToggle<CR>
 " Center cursor after searches
 nnoremap * *zz
 nnoremap # #zz
@@ -67,7 +68,9 @@ nnoremap n nzz
 nnoremap N Nzz
 " Faster replacing
 nnoremap S :%s//g<Left><Left>
-" Jump to end and beginning of line and up and down the window
+" Break the line at the last whitespace before the 80th column
+nnoremap <leader>b 080lBi<CR><Esc>
+" Jump to end and beginning of line and up and down by 5 rows
 nnoremap J 5j
 nnoremap K 5k
 nnoremap H ^
@@ -87,4 +90,7 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 " YCM Jumps
 nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
 nnoremap <silent> <leader>gf :YcmCompleter FixIt<CR>
-
+" Automatically deletes all trailing whitespace and newlines at end of file on
+" save.
+autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritePre * %s/\n\+\%$//e

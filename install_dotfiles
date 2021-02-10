@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Add dotfiles
+dotfiles=".vimrc .profile .gitconfig .bashrc .bash_aliases .Xresources .xinitrc"
+for dotfile in $dotfiles
+do
+	echo "Creating symlink for $PWD/$dotfile in $HOME/$dotfile"
+	ln -f -s $PWD/$dotfile $HOME/$dotfile
+done
+
+config_dirs="i3"
+for cfg in $config_dirs
+do
+	echo "Creating symlink for $PWD/$cfg in $HOME/.config/$cfg"
+	ln -f -s $PWD/$cfg $HOME/.config/$cfg
+done
+
+source ~/.profile
