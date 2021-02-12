@@ -6,4 +6,3 @@ alias l="ls -lh" \
       cl="c && l" \
       g=git \
       d-c=docker-compose
-

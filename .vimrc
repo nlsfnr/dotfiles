@@ -32,8 +32,11 @@ Plug 'mbbill/undotree' " Undotree visualization
 Plug 'posva/vim-vue'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'Townk/vim-autoclose'
 call plug#end()
 
+" vim-autoclose config
+let g:AutoClosePairs = "() {} \" \'"
 " Colorscheme
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey

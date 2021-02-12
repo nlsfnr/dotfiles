@@ -28,4 +28,4 @@ fi
 
 # Set the keyboard layout
 setxkbmap -layout us -option caps:escape
-source $HOME/.xinitrc
+source $HOME/.xinitrc &
