@@ -62,6 +62,7 @@ nnoremap <leader>qq :q!<CR>
 nnoremap QQ ZQ
 " Fuzzy file finder
 nnoremap <C-p> :GFiles<Cr>
+nnoremap <C-l> :Files<Cr>
 " Open undotree visaulization
 nnoremap <leader>u :UndotreeToggle<CR>
 " Center cursor after searches

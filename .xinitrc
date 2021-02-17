@@ -11,4 +11,5 @@ if xrandr | grep -q "DP-1-3"; then
             --right-of eDP-1-1
 fi
 
-exec i3
+blueman-applet &
+# exec i3
