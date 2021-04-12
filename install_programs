@@ -4,6 +4,7 @@ OLD_PWD=$PWD
 
 sudo apt-get update -yq && \
 sudo apt-get upgrade -yq && \
+sudo apt-get install curl tree nitrogen -yq && \
 sudo apt-get autoremove -yq
 
 # Python
@@ -53,6 +54,11 @@ sudo apt-get install -y nvidia-docker2 && \
 sudo systemctl restart docker
 
 # Desktop applications
-sudo apt-get install -y blueman i3 htop
+sudo apt-get install -y blueman i3 htop brave
+
+# Brave
+curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add - && \
+echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
+sudo apt update -yq && sudo apt install -yq brave-browser
 
 cd $OLD_PWD

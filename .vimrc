@@ -33,12 +33,19 @@ Plug 'posva/vim-vue'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'Townk/vim-autoclose'
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 call plug#end()
 
+" Latex live editing
+let g:livepreview_previewer = 'okular'
+augroup WrapLineInTeXFile
+    autocmd!
+    autocmd FileType tex setlocal wrap textwidth=80
+augroup END
 " vim-autoclose config
 let g:AutoClosePairs = "() {} \" \'"
 " Colorscheme
-set colorcolumn=80
+set colorcolumn=81
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 " The vimrc might be loaded for the first time, so we do not know if the
 " plugins are already installed.
@@ -57,12 +64,15 @@ nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
 " Operate on current buffer
 nnoremap <leader>w :w!<CR>
-nnoremap <leader>e :e
+nnoremap <leader>e :e<space>
 nnoremap <leader>qq :q!<CR>
+nnoremap <leader>f m0vipgq'0
 nnoremap QQ ZQ
 " Fuzzy file finder
 nnoremap <C-p> :GFiles<Cr>
 nnoremap <C-l> :Files<Cr>
+" Vimgrep
+nnoremap <C-g> :vimgrep // ./**<Left><Left><Left><Left><Left><Left>
 " Open undotree visaulization
 nnoremap <leader>u :UndotreeToggle<CR>
 " Center cursor after searches

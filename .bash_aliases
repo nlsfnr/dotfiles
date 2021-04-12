@@ -5,4 +5,6 @@ alias l="ls -lh" \
       pip=pip3 \
       cl="c && l" \
       g=git \
-      d-c=docker-compose
+      gst="git status" \
+      d-c=docker-compose \
+      _brightness="xrandr --output eDP-1-1 --brightness"
