@@ -38,9 +38,15 @@ call plug#end()
 
 " Latex live editing
 let g:livepreview_previewer = 'okular'
+let g:livepreview_engine = 'pdflatex'
 augroup WrapLineInTeXFile
     autocmd!
-    autocmd FileType tex setlocal wrap textwidth=80
+    autocmd FileType tex setlocal wrap textwidth=80 spell
+augroup END
+augroup spellchec
+    autocmd!
+    autocmd FileType tex setlocal spell
+    autocmd FileType md setlocal spell
 augroup END
 " vim-autoclose config
 let g:AutoClosePairs = "() {} \" \'"
@@ -67,12 +73,13 @@ nnoremap <leader>w :w!<CR>
 nnoremap <leader>e :e<space>
 nnoremap <leader>qq :q!<CR>
 nnoremap <leader>f m0vipgq'0
+nnoremap <leader>m :!make<CR>
 nnoremap QQ ZQ
 " Fuzzy file finder
 nnoremap <C-p> :GFiles<Cr>
 nnoremap <C-l> :Files<Cr>
 " Vimgrep
-nnoremap <C-g> :vimgrep // ./**<Left><Left><Left><Left><Left><Left>
+nnoremap <C-g> :vimgrep // **/*<Left><Left><Left><Left><Left><Left>
 " Open undotree visaulization
 nnoremap <leader>u :UndotreeToggle<CR>
 " Center cursor after searches

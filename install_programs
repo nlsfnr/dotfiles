@@ -4,7 +4,7 @@ OLD_PWD=$PWD
 
 sudo apt-get update -yq && \
 sudo apt-get upgrade -yq && \
-sudo apt-get install curl tree nitrogen -yq && \
+sudo apt-get install curl tree nitrogen cmake ranger -yq && \
 sudo apt-get autoremove -yq
 
 # Python
