@@ -31,3 +31,5 @@ setxkbmap -layout us -option caps:escape
 source $HOME/.xinitrc &
 
 DF=$HOME/dotfiles/
+. "$HOME/.cargo/env"
+export GPG_TTY=$(tty)

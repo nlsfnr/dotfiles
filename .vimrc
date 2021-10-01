@@ -14,6 +14,7 @@ set undodir=~/.vim/undodir
 set undofile
 set incsearch
 set scrolloff=8
+set nohlsearch
 
 " Tabs
 set tabstop=4 softtabstop=4
@@ -34,7 +35,52 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'Townk/vim-autoclose'
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
+Plug 'rust-lang/rust.vim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'kabouzeid/nvim-lspinstall'
+Plug 'nvim-lua/completion-nvim'
+Plug 'nvim-lua/lsp_extensions.nvim'
 call plug#end()
+
+" Colorscheme
+set colorcolumn=81
+highlight ColorColumn ctermbg=0 guibg=lightgrey
+" The vimrc might be loaded for the first time, so we do not know if the
+" plugins are already installed.
+try
+  colorscheme gruvbox
+catch /^Vim\%((\a\+)\)\=:E185/
+  colorscheme default
+endtry
+set background=dark
+
+lua <<EOF
+
+-- nvim_lsp object
+local nvim_lsp = require'lspconfig'
+
+-- Enable diagnostics
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
+
+require'lspinstall'.setup()
+
+local servers = require'lspinstall'.installed_servers()
+for _, server in pairs(servers) do
+  require'lspconfig'[server].setup{}
+end
+EOF
+
+" lua require'lspconfig'.rust.setup{on_attach=require'completion'.on_attach}
+" lua require'lspconfig'.python.setup{on_attach=require'completion'.on_attach}
+
+"set completeopt=menuone,noinsert,noselect
+"set shortmess+=c
 
 " Latex live editing
 let g:livepreview_previewer = 'okular'
@@ -50,24 +96,16 @@ augroup spellchec
 augroup END
 " vim-autoclose config
 let g:AutoClosePairs = "() {} \" \'"
-" Colorscheme
-set colorcolumn=81
-highlight ColorColumn ctermbg=0 guibg=lightgrey
-" The vimrc might be loaded for the first time, so we do not know if the
-" plugins are already installed.
-try
-  colorscheme gruvbox
-catch /^Vim\%((\a\+)\)\=:E185/
-  colorscheme default
-endtry
-set background=dark
-
+"
 " Convenience remaps
 let mapleader = " "
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
+nnoremap <leader>v :vs<CR>
+nnoremap <leader>V :sv<CR>
+nnoremap <leader>q :q!<CR>
 " Operate on current buffer
 nnoremap <leader>w :w!<CR>
 nnoremap <leader>e :e<space>

@@ -38,6 +38,10 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+bindsym $mod+m exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym $mod+n exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym $mod+Shift+m exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -181,16 +185,6 @@ bar {
         status_command i3status -c ~/.config/i3status/confing
 }
 
-# i3 move a workspace to another monitor (multi monitor setup)
-mode "move_workspace" {
- bindsym Up move workspace to output up
- bindsym Down move workspace to output down
- bindsym Left move workspace to output left
- bindsym Up move workspace to output up
-
- bindsym Escape mode "default"
-}
-
-bindsym $mod+o mode "move_workspace"
+bindsym $mod+b exec "sensible-browser"
 
 exec_always "setxkbmap -layout us,de -option 'grp:alt_shift_toggle'"

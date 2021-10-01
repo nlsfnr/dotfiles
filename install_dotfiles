@@ -8,6 +8,9 @@ do
 	ln -f -s $PWD/$dotfile $HOME/$dotfile
 done
 
+mkdir $HOME/.config/nvim/
+ln -f -s $PWD/.vimrc $HOME/.config/nvim/init.vim
+
 config_dirs="i3 i3status"
 for cfg in $config_dirs
 do
