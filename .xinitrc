@@ -15,8 +15,8 @@ else
         --output DP-1-3 \
             --primary \
             --mode 1920x1080 \
-            --right-of eDP-1-1;
-            --scale 1x1 \
+            --right-of eDP-1-1 \
+            --scale 1x1;
     echo "Dual monitor setup"
 fi
 

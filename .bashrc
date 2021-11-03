@@ -118,3 +118,4 @@ fi
 . "$HOME/.cargo/env"
 # For LSPs in Nvim
 export PATH=$PATH:$HOME/.local/share/nvim
+export PYTHONDONTWRITEBYTECODE=1
