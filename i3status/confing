@@ -16,8 +16,9 @@ general {
 }
 
 #order += "disk /home"
-#order += "volume master"
-order += "cpu_usage 0"
+order += "volume master"
+#order += "cpu_usage 0"
+#order += "memory"
 #order += "cpu_temperature 0"
 #order += "ipv6"
 #order += "run_watch DHCP"
@@ -40,13 +41,13 @@ ethernet eth0 {
 }
 
 battery 0 {
-        format = "%status %percentage %remaining"
+        format = "🔋%percentage"
         last_full_capacity = true
         low_threshold = 10
 }
 
 cpu_usage {
-		format = "CPU: %usage"
+		format = "🖩%usage"
 }
 
 run_watch DHCP {
@@ -76,8 +77,12 @@ cpu_temperature 0 {
 }
 
 volume master {
-    format = "Vol:%volume"
+    format = "🕩%volume"
 	  device = "default"
 	  mixer = "Master"
 	  mixer_idx = 0
+}
+
+memory {
+        format = "🐏%used"
 }

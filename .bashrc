@@ -119,3 +119,7 @@ fi
 # For LSPs in Nvim
 export PATH=$PATH:$HOME/.local/share/nvim
 export PYTHONDONTWRITEBYTECODE=1
+
+myscript() {
+    echo $1
+}

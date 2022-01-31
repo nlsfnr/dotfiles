@@ -28,8 +28,9 @@ fi
 
 # Set the keyboard layout
 setxkbmap -layout us -option caps:escape
-source $HOME/.xinitrc &
 
-DF=$HOME/dotfiles/
-. "$HOME/.cargo/env"
+if [ -z "$(ps -a | grep "blueman-applet" | grep -v "grep")" ] ; then
+    blueman-applet &
+fi
+
 export GPG_TTY=$(tty)
