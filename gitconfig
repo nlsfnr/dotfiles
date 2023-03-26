@@ -5,7 +5,7 @@
 	email = nls.forstner@gmail.com
 	signingkey = 1E5B5CB58A200D2C
 [core]
-	editor = vim
+	editor = nvim
 [http]
 	postBuffer = 157286400
 	version = HTTP/1.1

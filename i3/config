@@ -183,7 +183,7 @@ bar {
     mode hide
     hidden_state hide
     modifier $mod
-    status_command i3status -c ~/.config/i3status/confing
+    status_command ~/.config/i3/status_script.py
 }
 
 bindsym $mod+b exec "sensible-browser"

@@ -1,0 +1,4 @@
+./plugin/
+mason-registry-update
+packer.nvim.log
+plugin/
