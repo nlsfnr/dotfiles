@@ -23,7 +23,10 @@ def get_battery() -> str:
     global _prev_batt
     cmd = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
     out = str(run(cmd, capture_output=True).stdout)
-    line, *_ = re.findall(r'percentage:.*[0-9]+%', out)
+    lines = re.findall(r'percentage:.*[0-9]+%', out)
+    if not lines:
+        return "ERR"
+    line, *_ = lines
     batt, *_ = re.findall(r'[0-9]+%', line)
     batt_percent = float(batt.strip('%'))
     if batt_percent <= 5 and _prev_batt > 5:
@@ -100,7 +103,6 @@ class StatusLoop(Loop):
         write("[")
         while True:
             if self._termination_event.is_set():
-                write("[]]")
                 logger.info("Terminating status loop")
                 return
             status = [
@@ -171,19 +173,14 @@ def log_exception(e: Exception) -> None:
 
 
 def main():
-    while True:
-        try:
-            termination_event = threading.Event()
-            status_loop = StatusLoop(termination_event)
-            event_loop = EventLoop(termination_event)
-            write(json.dumps(dict(version=1, click_events=True)))
-            status_loop.start()
-            event_loop.start()
-            status_loop.join()
-            event_loop.join()
-        except Exception:
-            logger.exception("Exception in main loop. Restarting...")
-            notify("Event script failed. Restarting...")
+    termination_event = threading.Event()
+    status_loop = StatusLoop(termination_event)
+    event_loop = EventLoop(termination_event)
+    write(json.dumps(dict(version=1, click_events=True)))
+    status_loop.start()
+    event_loop.start()
+    status_loop.join()
+    event_loop.join()
 
 
 if __name__ == '__main__':

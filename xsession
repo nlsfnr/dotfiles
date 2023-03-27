@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 xrdb -merge ~/.Xresources
 
 if xrandr | grep -q "DP-3 disconnected"; then

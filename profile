@@ -1,5 +1,15 @@
-export PATH="$PATH:$HOME/.local/bin"
-export PATH="$PATH:/usr/local/go/bin"
+#!/usr/bin/bash
+
+function add_to_path() {
+  if [[ ":$PATH:" != *":$1:"* ]]; then
+    export PATH="$PATH:$1"
+  fi
+}
+
+add_to_path "$HOME/.local/bin"
+add_to_path "/usr/local/go/bin"
+add_to_path "$HOME/.cargo/bin"
+
 export PYTHONDONTWRITEBYTECODE="1"
 
 # Set keyboard layout and map caps lock to escape
@@ -8,18 +18,14 @@ setxkbmap -option 'grp:alt_shift_toggle'
 setxkbmap -option caps:escape
 
 # Run the blueman-applet if it's not already running
-[ -z "$(ps -a | grep "blueman-applet" | grep -v "grep")" ] && \
-    blueman-applet &> /dev/null
-
-# Set the Cargo environment variables
-[ -f "$HOME/.cargo/env" ]  && \
-    source "$HOME/.cargo/env" &> /dev/null
+! pgrep -x "blueman-applet" > /dev/null && \
+    blueman-applet &
 
 # Add the GitHub SSH key to the ssh-agent
 [ -f "$HOME/.ssh/github" ] && \
     eval $(ssh-agent) > /dev/null && \
-    ssh-add -q ~/.ssh/github > /dev/null
+    ssh-add -q ~/.ssh/github
 
 # Configure xsession
 [ -f "$HOME/.xsession" ] && \
-    source "$HOME/.xsession" &> /dev/null
+    source "$HOME/.xsession"
