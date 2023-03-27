@@ -1,28 +1,25 @@
-# if running bash
-if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
-    fi
-fi
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:/usr/local/go/bin"
+export PYTHONDONTWRITEBYTECODE="1"
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
+# Set keyboard layout and map caps lock to escape
+setxkbmap -layout us,de
+setxkbmap -option 'grp:alt_shift_toggle'
+setxkbmap -option caps:escape
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
+# Run the blueman-applet if it's not already running
+[ -z "$(ps -a | grep "blueman-applet" | grep -v "grep")" ] && \
+    blueman-applet &> /dev/null
 
-# Set the keyboard layout
-setxkbmap -layout us -option caps:escape
+# Set the Cargo environment variables
+[ -f "$HOME/.cargo/env" ]  && \
+    source "$HOME/.cargo/env" &> /dev/null
 
-if [ -z "$(ps -a | grep "blueman-applet" | grep -v "grep")" ] ; then
-    blueman-applet &
-fi
+# Add the GitHub SSH key to the ssh-agent
+[ -f "$HOME/.ssh/github" ] && \
+    eval $(ssh-agent) > /dev/null && \
+    ssh-add -q ~/.ssh/github > /dev/null
 
-export PATH=$PATH:/usr/local/go/bin
-export GPG_TTY=$(tty)
-. $HOME/.xsession
+# Configure xsession
+[ -f "$HOME/.xsession" ] && \
+    source "$HOME/.xsession" &> /dev/null

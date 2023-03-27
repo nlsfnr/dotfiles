@@ -37,7 +37,11 @@ vim.keymap.set("v", "p", "\"0p")
 vim.keymap.set("v", "y", "\"0y")
 vim.keymap.set("n", "y", "\"0y")
 
+-- Yank selection when deleting in visual mode
+vim.keymap.set("v", "d", "\"0d")
+
 -- Yank selection into the system clipboard
+-- This only worked for me once I ran `apt install xclip xsel`.
 vim.keymap.set("n", "<C-y>", "\"+y")
 vim.keymap.set("v", "<C-y>", "\"+y")
 

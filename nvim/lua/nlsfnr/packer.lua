@@ -42,5 +42,5 @@ return require('packer').startup(function(use)
     use("github/copilot.vim")
 
     -- Trim trailing whitespace
-    use({"cappyzawa/trim.nvim", config = function() require("trim").setup({}) end})
+    use("cappyzawa/trim.nvim")
 end)

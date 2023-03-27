@@ -3,7 +3,7 @@
 [user]
 	name = Nicolas Forstner
 	email = nls.forstner@gmail.com
-	signingkey = 1E5B5CB58A200D2C
+	signingkey = 1E5B5CB58A200D2C  # Yes, this is safe to publish
 [core]
 	editor = nvim
 [http]

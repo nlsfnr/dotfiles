@@ -8,8 +8,12 @@ import time
 import select
 from subprocess import run
 from typing import Optional
+import logging
+import traceback
 
 import psutil
+
+logger = logging.getLogger("status_script")
 
 
 _prev_batt = 100
@@ -18,16 +22,15 @@ _prev_batt = 100
 def get_battery() -> str:
     global _prev_batt
     cmd = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
-    res = run(cmd, capture_output=True)
-    out = str(res.stdout)
+    out = str(run(cmd, capture_output=True).stdout)
     line, *_ = re.findall(r'percentage:.*[0-9]+%', out)
     batt, *_ = re.findall(r'[0-9]+%', line)
     batt_percent = float(batt.strip('%'))
-    if batt_percent < 5 and _prev_batt > 5:
+    if batt_percent <= 5 and _prev_batt > 5:
         notify(f"Critical battery: {batt}")
-    elif batt_percent < 10 and _prev_batt > 10:
+    elif batt_percent <= 10 and _prev_batt > 10:
         notify(f"Critical battery: {batt}")
-    elif batt_percent < 20 and _prev_batt > 20:
+    elif batt_percent <= 20 and _prev_batt > 20:
         notify(f"Low battery: {batt}")
     _prev_batt = batt_percent
     return batt
@@ -56,14 +59,14 @@ def get_cpu_usage() -> str:
     if _CPU_EMA is None:
         _CPU_EMA = psutil.cpu_percent()
     else:
-        _CPU_EMA = (_CPU_EMA * _CPU_EMA_ALPHA 
-                                + psutil.cpu_percent() * (1 - _CPU_EMA_ALPHA))
+        _CPU_EMA = (_CPU_EMA * _CPU_EMA_ALPHA
+                    + psutil.cpu_percent() * (1 - _CPU_EMA_ALPHA))
     mem = psutil.virtual_memory()
     total = mem.total / 1024 / 1024
     return f"{_CPU_EMA:.1f}% {mem.used / 1024**3:.1f}/{total/1024:.1f} G"
 
 
-class StatusLoop(threading.Thread):
+class Loop(threading.Thread):
 
     def __init__(
         self,
@@ -81,10 +84,24 @@ class StatusLoop(threading.Thread):
             self._termination_event.set()
 
     def loop(self) -> None:
+        raise NotImplementedError()
+
+    def join(self, timeout: Optional[float] = None) -> None:
+        super().join(timeout)
+        if self._exception is not None:
+            self._termination_event.set()
+            log_exception(self._exception)
+            raise self._exception
+
+
+class StatusLoop(Loop):
+
+    def loop(self) -> None:
         write("[")
         while True:
             if self._termination_event.is_set():
                 write("[]]")
+                logger.info("Terminating status loop")
                 return
             status = [
                 dict(
@@ -110,34 +127,13 @@ class StatusLoop(threading.Thread):
                     full_text=f"{datetime.datetime.now().strftime('%b %d %H:%M:%S')}",
                     color="#FFFFFF",
                     background="#000000",
-                ), 
+                ),
             ]
             write(json.dumps(status) + ",\n")
             time.sleep(0.1)
 
-    def join(self, timeout: Optional[float] = None) -> None:
-        super().join(timeout)
-        if self._exception is not None:
-            notify(f"Status script failed: {self._exception}")
-            raise self._exception
 
-
-class EventLoop(threading.Thread):
-
-    def __init__(
-        self, 
-        termination_event: threading.Event,
-    ) -> None:
-        super().__init__()
-        self._exception = None
-        self._termination_event = termination_event
-
-    def run(self) -> None:
-        try:
-            self.loop()
-        except Exception as e:
-            self._exception = e
-            self._termination_event.set()
+class EventLoop(Loop):
 
     def loop(self) -> None:
         while True:
@@ -147,6 +143,7 @@ class EventLoop(threading.Thread):
                 if select.select([sys.stdin], [], [], 0.1)[0]:
                     break
                 elif self._termination_event.is_set():
+                    logger.info("Terminating event loop")
                     return
             line = sys.stdin.readline().strip()
             try:
@@ -154,12 +151,6 @@ class EventLoop(threading.Thread):
             except json.JSONDecodeError:
                 continue
             notify(f"Event: {event}")
-
-    def join(self, timeout: Optional[float] = None) -> None:
-        super().join(timeout)
-        if self._exception is not None:
-            notify(f"Event script failed: {self._exception}")
-            raise self._exception
 
 
 def write(text: str):
@@ -172,16 +163,33 @@ def notify(msg: str, urgency: str = 'normal') -> None:
     run(['notify-send', '--urgency', urgency, msg], capture_output=True)
 
 
-def main_loop():
-    termination_event = threading.Event()
-    status_loop = StatusLoop(termination_event)
-    event_loop = EventLoop(termination_event)
-    write(json.dumps(dict(version=1, click_events=True)))
-    status_loop.start()
-    event_loop.start()
-    status_loop.join()
-    event_loop.join()
+def log_exception(e: Exception) -> None:
+    trace = ''.join(traceback.format_exception(
+        type(e), e, e.__traceback__))
+    logger.error(trace)
+    notify(f"Event script failed: {trace}")
+
+
+def main():
+    while True:
+        try:
+            termination_event = threading.Event()
+            status_loop = StatusLoop(termination_event)
+            event_loop = EventLoop(termination_event)
+            write(json.dumps(dict(version=1, click_events=True)))
+            status_loop.start()
+            event_loop.start()
+            status_loop.join()
+            event_loop.join()
+        except Exception:
+            logger.exception("Exception in main loop. Restarting...")
+            notify("Event script failed. Restarting...")
 
 
 if __name__ == '__main__':
-    main_loop()
+    logger.handlers = []
+    file_handler = logging.FileHandler('/tmp/i3status_script.log')
+    file_handler.setFormatter(logging.Formatter('[%(asctime)s|%(levelname)s] %(message)s'))
+    logger.addHandler(file_handler)
+    logger.setLevel(logging.DEBUG)
+    main()
