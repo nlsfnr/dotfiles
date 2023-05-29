@@ -62,3 +62,6 @@ vim.keymap.set("i", "kj", "<ESC>")
 -- Move selection up and down
 vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv")
+
+-- Restart Lsp and Copilot
+vim.keymap.set("n", "<leader>r", ":LspRestart<CR>:!sleep 1<CR>:Copilot restart<CR>")
