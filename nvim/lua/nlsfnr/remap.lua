@@ -30,7 +30,7 @@ vim.keymap.set("n", "<leader>v", "<C-w>v")
 vim.keymap.set("n", "<leader>V", "<C-w>s")
 
 -- Show syntax tree
-vim.keymap.set("n", "<leader>s", ":TSPlaygroundToggle<CR>")
+-- vim.keymap.set("n", "<leader>s", ":TSPlaygroundToggle<CR>")
 
 -- Keep yanked content when pasting
 vim.keymap.set("v", "p", "\"0p")
@@ -64,4 +64,7 @@ vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv")
 
 -- Restart Lsp and Copilot
-vim.keymap.set("n", "<leader>r", ":LspRestart<CR>:!sleep 1<CR>:Copilot restart<CR>")
+vim.keymap.set("n", "<leader>r", ":LspRestart<CR>:!sleep 0.25<CR>:Copilot restart<CR>")
+
+-- Open ~/.plan.md file
+vim.keymap.set("n", "<leader>p", ":e ~/.plan.md<CR>")

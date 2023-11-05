@@ -10,11 +10,9 @@ add_to_path "$HOME/.local/bin"
 add_to_path "/usr/local/go/bin"
 add_to_path "$HOME/.cargo/bin"
 
-export PYTHONDONTWRITEBYTECODE="1"
-
 # Set keyboard layout and map caps lock to escape
 setxkbmap -layout us,de
-setxkbmap -option 'grp:alt_shift_toggle'
+setxkbmap -option 'grp:win_space_toggle'
 setxkbmap -option caps:escape
 
 # Run the blueman-applet if it's not already running

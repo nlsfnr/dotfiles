@@ -7,7 +7,8 @@ import threading
 import time
 import select
 from subprocess import run
-from typing import Optional
+from functools import wraps
+from typing import Optional, TypeVar, Callable, Any
 import logging
 import traceback
 
@@ -19,6 +20,22 @@ logger = logging.getLogger("status_script")
 _prev_batt = 100
 
 
+CallableT = TypeVar('CallableT', bound=Callable[..., str])
+
+
+def try_or_error(error: str) -> Callable[[CallableT], CallableT]:
+    def wrapper(fn: Callable[..., str]) -> Callable[..., str]:
+        @wraps(fn)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return fn(*args, **kwargs)
+            except Exception as e:
+                return error
+        return wrapped
+    return wrapper  # type: ignore
+
+
+@try_or_error("ERR")
 def get_battery() -> str:
     global _prev_batt
     cmd = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
@@ -39,11 +56,12 @@ def get_battery() -> str:
     return batt
 
 
+@try_or_error("ERR")
 def get_gpu_usage() -> str:
     # Get GPU usage
     cmd = ['nvidia-smi', '--query-gpu=utilization.gpu', '--format=csv,noheader']
     usage = run(cmd, capture_output=True).stdout.decode('utf-8').strip()
-    without_mib = lambda x: x.decode('utf-8').strip().strip('MiB').strip()
+    without_mib = lambda x: int(x.decode('utf-8').strip().strip('MiB').strip())
     # Get GPU memory usage
     cmd = ['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader']
     mem_usage = without_mib(run(cmd, capture_output=True).stdout)
@@ -57,6 +75,7 @@ _CPU_EMA = None
 _CPU_EMA_ALPHA = 0.5
 
 
+@try_or_error("ERR")
 def get_cpu_usage() -> str:
     global _CPU_EMA
     if _CPU_EMA is None:

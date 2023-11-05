@@ -1,6 +1,6 @@
 CONFIG=$(HOME)/.config
 TARGETS_CONFIG=nvim i3
-TARGETS_HOME=profile xsession Xresources bash_aliases gitconfig bashrc
+TARGETS_HOME=profile xsession Xresources gitconfig bashrc
 
 .PHONY: all
 all: $(TARGETS_CONFIG) $(TARGETS_HOME)

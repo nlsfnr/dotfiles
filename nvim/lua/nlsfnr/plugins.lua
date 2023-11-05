@@ -47,6 +47,7 @@ return require('lazy').setup({
         }
     },
 
+    -- Copilot
     "github/copilot.vim",
 
     -- Trim trailing whitespace
