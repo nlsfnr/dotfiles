@@ -1,70 +1,75 @@
+local function setn(left, right) vim.keymap.set("n", left, right) end
+local function setv(left, right) vim.keymap.set("v", left, right) end
+local function seti(left, right) vim.keymap.set("i", left, right) end
+
 vim.g.mapleader = " "
+
 -- Exit vim
-vim.keymap.set("n", "QQ", ":q!<CR>")
+setn("QQ", ":q!<CR>")
 
 -- Write buffer or edit new one
-vim.keymap.set("n", "<leader>w", ":w!<CR>")
-vim.keymap.set("n", "<leader>e", ":e ")
-
--- Run Makefile
-vim.keymap.set("n", "<leader>m", ":!make<CR>")
+setn("<leader>w", ":w!<CR>")
+setn("<leader>e", ":e ")
+setn("<leader>m", ":!make<CR>")
 
 -- Move by 5 lines or to beginning and end of line
-vim.keymap.set("n", "J", "5j")
-vim.keymap.set("v", "J", "5j")
-vim.keymap.set("n", "K", "5k")
-vim.keymap.set("v", "K", "5k")
-vim.keymap.set("n", "H", "^")
-vim.keymap.set("v", "H", "^")
-vim.keymap.set("n", "L", "$")
-vim.keymap.set("v", "L", "$")
+setn("J", "5j")
+setv("J", "5j")
+setn("K", "5k")
+setv("K", "5k")
+setn("H", "^")
+setv("H", "^")
+setn("L", "$")
+setv("L", "$")
 
 -- Move between windows
-vim.keymap.set("n", "<leader>j", "<C-w>j")
-vim.keymap.set("n", "<leader>k", "<C-w>k")
-vim.keymap.set("n", "<leader>h", "<C-w>h")
-vim.keymap.set("n", "<leader>l", "<C-w>l")
+setn("<leader>j", "<C-w>j")
+setn("<leader>k", "<C-w>k")
+setn("<leader>h", "<C-w>h")
+setn("<leader>l", "<C-w>l")
 
 -- Split window
-vim.keymap.set("n", "<leader>v", "<C-w>v")
-vim.keymap.set("n", "<leader>V", "<C-w>s")
-
--- Show syntax tree
--- vim.keymap.set("n", "<leader>s", ":TSPlaygroundToggle<CR>")
+setn("<leader>v", "<C-w>v")
+setn("<leader>V", "<C-w>s")
 
 -- Keep yanked content when pasting
-vim.keymap.set("v", "p", "\"0p")
-vim.keymap.set("v", "y", "\"0y")
-vim.keymap.set("n", "y", "\"0y")
+setv("p", "\"0p")
+setv("y", "\"0y")
+setn("y", "\"0y")
 
 -- Yank selection when deleting in visual mode
-vim.keymap.set("v", "d", "\"0d")
+setv("d", "\"0d")
 
 -- Yank selection into the system clipboard
 -- This only worked for me once I ran `apt install xclip xsel`.
-vim.keymap.set("n", "<C-y>", "\"+y")
-vim.keymap.set("v", "<C-y>", "\"+y")
+setn("<C-y>", "\"+y")
+setv("<C-y>", "\"+y")
 
 -- When in block selection mode, adapt changes even when pressing Ctrl+c
-vim.keymap.set("i", "<C-c>", "<Esc>")
+seti("<C-c>", "<Esc>")
 
 -- Keep search term in the middle of the screen
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+setn("n", "nzzzv")
+setn("N", "Nzzzv")
 
 -- Quicker find and replace
-vim.keymap.set("n", "S", ":%s//g<Left><Left>")
+setn("S", ":%s//g<Left><Left>")
 
 -- Exit to normal mode by smashing j and k
-vim.keymap.set("i", "jk", "<ESC>")
-vim.keymap.set("i", "kj", "<ESC>")
+seti("jk", "<ESC>")
+seti("kj", "<ESC>")
+seti("jj", "j")
+seti("kk", "k")
 
 -- Move selection up and down
-vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv")
+setv("<C-j>", ":m '>+1<CR>gv=gv")
+setv("<C-k>", ":m '<-2<CR>gv=gv")
 
 -- Restart Lsp and Copilot
-vim.keymap.set("n", "<leader>r", ":LspRestart<CR>:!sleep 0.25<CR>:Copilot restart<CR>")
+setn("<leader>r", ":LspRestart<CR>:!sleep 0.25<CR>:Copilot restart<CR>")
 
 -- Open ~/.plan.md file
-vim.keymap.set("n", "<leader>p", ":e ~/.plan.md<CR>")
+setn("<leader>p", ":e ~/.plan.md<CR>")
+
+
+-- Additional, plugin-specific remaps can be found in the after/ directory.

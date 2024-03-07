@@ -2,3 +2,4 @@
 mason-registry-update
 packer.nvim.log
 plugin/
+lazy-lock.json

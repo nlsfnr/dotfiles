@@ -11,45 +11,48 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-return require('lazy').setup({
+return require("lazy").setup({
 
     -- Fuzzy finder
     {
-        'nvim-telescope/telescope.nvim',
-        tag = '0.1.1',
-        dependencies = {'nvim-lua/plenary.nvim'}
+        "nvim-telescope/telescope.nvim",
+        dependencies = {"nvim-lua/plenary.nvim"},
     },
 
     -- Colorscheme: Rose Pine
-    { 'rose-pine/neovim', name = 'rose-pine' },
+    { "rose-pine/neovim", name = "rose-pine" },
 
     -- Treesitter: Syntax-aware highlighting
-    'nvim-treesitter/nvim-treesitter',
-    'nvim-treesitter/playground',
-
-    -- Harpoonn: Active set of files
-    'theprimeagen/harpoon',
+    { "nvim-treesitter/nvim-treesitter"},
 
     -- LSP
     {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v2.x',
+        "VonHeikemen/lsp-zero.nvim",
+        branch = "v2.x",
         dependencies = {
             -- LSP Support
-            {'neovim/nvim-lspconfig'},             -- Required
-            {'williamboman/mason.nvim'},           -- Optional
-            {'williamboman/mason-lspconfig.nvim'}, -- Optional
+            {"neovim/nvim-lspconfig"},             -- Required
+            {"williamboman/mason.nvim"},           -- Optional
+            {"williamboman/mason-lspconfig.nvim"}, -- Optional
 
             -- Autocompletion
-            {'hrsh7th/nvim-cmp'},     -- Required
-            {'hrsh7th/cmp-nvim-lsp'}, -- Required
-            {'L3MON4D3/LuaSnip'},     -- Required
+            {"hrsh7th/nvim-cmp"},     -- Required
+            {"hrsh7th/cmp-nvim-lsp"}, -- Required
+            {"L3MON4D3/LuaSnip"},     -- Required
         }
     },
 
     -- Copilot
-    "github/copilot.vim",
+    { "github/copilot.vim"},
 
     -- Trim trailing whitespace
     "cappyzawa/trim.nvim",
+
+    {
+        "folke/which-key.nvim",
+        init = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+        end,
+    }
 })
