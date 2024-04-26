@@ -32,6 +32,10 @@ setn("<leader>l", "<C-w>l")
 setn("<leader>v", "<C-w>v")
 setn("<leader>V", "<C-w>s")
 
+-- Navigate quickfix list
+setn("<C-J>", ":cnext<CR>zz")
+setn("<C-K>", ":cprev<CR>zz")
+
 -- Keep yanked content when pasting
 setv("p", "\"0p")
 setv("y", "\"0y")
@@ -70,6 +74,5 @@ setn("<leader>r", ":LspRestart<CR>:!sleep 0.25<CR>:Copilot restart<CR>")
 
 -- Open ~/.plan.md file
 setn("<leader>p", ":e ~/.plan.md<CR>")
-
 
 -- Additional, plugin-specific remaps can be found in the after/ directory.

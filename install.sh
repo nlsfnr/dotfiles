@@ -2,7 +2,7 @@
 
 set -e
 
-PYTHON_VERSION=3.9
+PYTHON_VERSION=3.10
 TIMEZONE=Europe/London
 APT_PACKAGES="git \
               neovim \

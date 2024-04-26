@@ -11,7 +11,7 @@ force_color_prompt=yes
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(__git_ps1 "(%s)")\$ '
 unset color_prompt force_color_prompt
 
-# Enable color support of ls and also add handy aliases
+# Enable color support of ls
 [ -x /usr/bin/dircolors ] && \
     test -r ~/.dircolors && \
     eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -31,29 +31,34 @@ shopt -s globstar
 alias ls='ls --color=auto'
 alias l="ls -lh"
 alias ll="l -a"
-alias python3=python3.10
-alias python=python3.10
-alias py=python3.10
-alias pip="python3.10 -m pip"
+alias python=python3
+alias py=python3
+alias py8=python3.8
+alias py10=python3.10
+alias pip="python3 -m pip"
 alias g=git
 alias gst="git status"
 alias _brightness="xrandr --output eDP-1 --brightness"
 alias _suspend="systemctl suspend"
-alias _reconnect="sudo ip link set wlp59s0 down && sudo ip link set wlp59s0 up"
-alias vim=nvim
 alias v=nvim
 alias vi=nvim
+alias vim=nvim
 alias va="if [ -d .venv ]; then . .venv/bin/activate; else [ -d venv ] && . venv/bin/activate; fi"
-alias ffind="find . -type f -name"
-alias tree="tree -I __pycache__"
+alias ffind="find . -type f -wholename"
+alias tree="tree -I '__pycache__|node_modules'"
 
-alias gpt4="gptx q --model gpt-4"
-alias gpt4r="gptx q --model gpt-4 --conversation latest"
-alias gptbash="gptx q --model gpt-4 --prompt bash"
-alias gptrun="gptx q --model gpt-4 --prompt bash --run"
+alias gpt="gptx q"  # Start new conversation with GPT-4
+alias gptc="gptx q --conversation latest"  # Continue conversation
+alias gptbash="gptx q --run --prompt bash"
+alias gb="gptx q --run --prompt bash"
+alias gptr="gptx repeat"  # Repeat last prompt
 
-alias plan="vim ~/.plan.md"
+alias plan="nvim ~/.plan.md"
+alias lr="cd ~/L/ && va"
 
+# NVM = Node Version Manager
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export EDITOR=nvim

@@ -6,7 +6,7 @@ import sys
 import threading
 import time
 import select
-from subprocess import run
+from subprocess import run, TimeoutExpired
 from functools import wraps
 from typing import Optional, TypeVar, Callable, Any
 import logging
@@ -30,12 +30,77 @@ def try_or_error(error: str) -> Callable[[CallableT], CallableT]:
             try:
                 return fn(*args, **kwargs)
             except Exception as e:
+                logger.error(f"Error in {fn.__name__}: {e}", exc_info=e)
                 return error
         return wrapped
     return wrapper  # type: ignore
 
 
+def debounce(interval: float) -> Callable[[CallableT], CallableT]:
+    def wrapper(fn: Callable[..., str]) -> Callable[..., str]:
+        last_call = 0.0
+        last_value = ""
+
+        @wraps(fn)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            nonlocal last_call, last_value
+            if time.time() - last_call > interval:
+                last_value = fn(*args, **kwargs)
+                last_call = time.time()
+            return last_value
+
+        return wrapped
+    return wrapper  # type: ignore
+
+
 @try_or_error("ERR")
+@debounce(1)
+def get_network() -> str:
+    cmd = "nmcli -t -f active,ssid dev wifi | grep yes | cut -d: -f2"
+    try:
+        out = run(
+            cmd,
+            capture_output=True,
+            shell=True,
+            timeout=1.,
+        ).stdout.decode('utf-8').strip()
+    except TimeoutExpired:
+        return "..."
+    return out
+
+
+_lock = threading.Lock()
+
+
+def try_connect() -> None:
+    cmd = ["nmcli", "connect", "up", "NF"]
+    aquired = _lock.acquire(blocking=False)
+    if not aquired:
+        msg = "Already trying to connect"
+        logger.info(msg)
+        notify(msg)
+        return
+    try:
+        notify("Connecting to NF...")
+        process = run(cmd, capture_output=True, timeout=20.)
+        process.check_returncode()
+    except TimeoutExpired:
+        msg = "Connection attempt timed out"
+        logger.error(msg)
+        notify(msg)
+    except Exception as e:
+        msg = f"Failed to connect: {e}"
+        logger.error(msg, exc_info=e)
+        notify(msg)
+    else:
+        msg = "Connected to NF"
+        logger.info(msg)
+    finally:
+        _lock.release()
+
+
+@try_or_error("ERR")
+@debounce(10)
 def get_battery() -> str:
     global _prev_batt
     cmd = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
@@ -69,6 +134,10 @@ def get_gpu_usage() -> str:
     cmd = ['nvidia-smi', '--query-gpu=memory.total', '--format=csv,noheader']
     mem_total = without_mib(run(cmd, capture_output=True).stdout)
     return f"{usage} {mem_usage}/{mem_total} M"
+
+
+def get_datetime() -> str:
+    return datetime.datetime.now().strftime("%a %d %b %H:%M:%S")
 
 
 _CPU_EMA = None
@@ -127,27 +196,29 @@ class StatusLoop(Loop):
             status = [
                 dict(
                     name="cpu",
-                    full_text=f"CPU: {get_cpu_usage()}",
+                    full_text=f" CPU: {get_cpu_usage()} ",
                     color="#FFFFFF",
-                    background="#220000",
                 ),
                 dict(
                     name="gpu",
-                    full_text=f"GPU: {get_gpu_usage()}",
+                    full_text=f" GPU: {get_gpu_usage()} ",
                     color="#FFFFFF",
-                    background="#000022",
                 ),
                 dict(
                     name="battery",
-                    full_text=f"BAT: {get_battery()}",
+                    full_text=f" BAT: {get_battery()} ",
                     color="#FFFFFF",
-                    background="#002200",
+                ),
+                dict(
+                    name="network",
+                    full_text=f" NW: {get_network()} ",
+                    color="#FFFFFF",
                 ),
                 dict(
                     name="time",
-                    full_text=f"{datetime.datetime.now().strftime('%b %d %H:%M:%S')}",
-                    color="#FFFFFF",
-                    background="#000000",
+                    full_text=f" {get_datetime()} ",
+                    color="#000000",
+                    background="#B0B0B0",
                 ),
             ]
             write(json.dumps(status) + ",\n")
@@ -159,8 +230,8 @@ class EventLoop(Loop):
     def loop(self) -> None:
         while True:
             while True:
-                # Check if stdin contains data with a timeout of 0.1 seconds to regularly check
-                # if the termination event has been set.
+                # Check if stdin contains data with a timeout of 0.1 seconds to
+                # regularly check if the termination event has been set.
                 if select.select([sys.stdin], [], [], 0.1)[0]:
                     break
                 elif self._termination_event.is_set():
@@ -171,7 +242,13 @@ class EventLoop(Loop):
                 event = json.loads(line.strip(','))
             except json.JSONDecodeError:
                 continue
-            notify(f"Event: {event}")
+            name = event.get("name", None)
+            match name:
+                case "network":
+                    thread = threading.Thread(target=try_connect)
+                    thread.start()
+                case _:
+                    notify(f"Unknown event: {name}")
 
 
 def write(text: str):
@@ -203,9 +280,10 @@ def main():
 
 
 if __name__ == '__main__':
-    logger.handlers = []
-    file_handler = logging.FileHandler('/tmp/i3status_script.log')
-    file_handler.setFormatter(logging.Formatter('[%(asctime)s|%(levelname)s] %(message)s'))
-    logger.addHandler(file_handler)
-    logger.setLevel(logging.DEBUG)
+    # Set up logging to log to /tmp/i3status_script.log
+    logging.basicConfig(
+        filename='/tmp/i3status_script.log',
+        level=logging.INFO,
+        format='[%(asctime)s|%(levelname)s] %(message)s',
+    )
     main()
