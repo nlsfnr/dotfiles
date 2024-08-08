@@ -43,16 +43,25 @@ return require("lazy").setup({
     },
 
     -- Copilot
-    { "github/copilot.vim"},
+    {"github/copilot.vim"},
 
     -- Trim trailing whitespace
     "cappyzawa/trim.nvim",
 
     {
         "folke/which-key.nvim",
+        event = "VeryLazy",
         init = function()
             vim.o.timeout = true
             vim.o.timeoutlen = 300
         end,
-    }
+        opts = {},
+    },
+
+    {
+        "FotiadisM/tabset.nvim",
+        config = function()
+            require("tabset").setup()
+        end
+    },
 })

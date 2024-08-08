@@ -1,5 +1,5 @@
 ./plugin/
 mason-registry-update
 packer.nvim.log
-plugin/
+./plugin/
 lazy-lock.json
