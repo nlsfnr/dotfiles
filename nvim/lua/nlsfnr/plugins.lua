@@ -19,8 +19,7 @@ return require("lazy").setup({
         dependencies = {"nvim-lua/plenary.nvim"},
     },
 
-    -- Colorscheme: Rose Pine
-    { "rose-pine/neovim", name = "rose-pine" },
+    { "pbrisbin/vim-colors-off" },
 
     -- Treesitter: Syntax-aware highlighting
     { "nvim-treesitter/nvim-treesitter"},
